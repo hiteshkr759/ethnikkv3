@@ -170,5 +170,6 @@ dist
 
 .dev.vars
 .wrangler/
+.env
 
 /src/generated/prisma

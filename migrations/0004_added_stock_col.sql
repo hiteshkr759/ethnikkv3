@@ -1,10 +1,9 @@
--- Migration number: 0002 	 2025-09-20T21:04:20.721Z
+-- CreateTable
 DROP TABLE "User";
 DROP TABLE "Product";
 DROP TABLE "Customer";
 DROP TABLE "Order";
 DROP TABLE "OrderItem";
--- CreateTable
 CREATE TABLE "User" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "email" TEXT NOT NULL,
@@ -23,6 +22,7 @@ CREATE TABLE "Product" (
     "description" TEXT,
     "costPrice" REAL NOT NULL,
     "sellingPrice" REAL NOT NULL,
+    "stock" INTEGER NOT NULL DEFAULT 0,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
