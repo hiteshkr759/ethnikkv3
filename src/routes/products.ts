@@ -6,8 +6,8 @@ const productRouter = new Hono<{ Bindings: { DB: D1Database } }>()
 // GET all products
 productRouter.get('/', async (c) => {
   const prisma = await prismaClients.fetch(c.env.DB)
-  const cutomers = await prisma.customer.findMany()
-  return c.json(cutomers)
+  const products = await prisma.product.findMany()
+  return c.json(products)
 })
 
 // POST create product
@@ -15,11 +15,11 @@ productRouter.post('/', async (c) => {
     try {
         const prisma = await prismaClients.fetch(c.env.DB)
         const body = await c.req.json()
-        const customer = await prisma.customer.create({ data: body })
-        return c.json(customer)
+        const product = await prisma.product.create({ data: body })
+        return c.json(product)
     } catch(error) {
-        console.error('Error creating customer:', error);
-        return c.json({ error: 'Failed to create customer', details: error }, 500) 
+        console.error('Error creating product:', error);
+        return c.json({ error: 'Failed to create product', details: error }, 500) 
     }
 })
 
