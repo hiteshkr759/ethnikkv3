@@ -1,15 +1,11 @@
 import { Hono } from 'hono'
+import { logger } from 'hono/logger'
 import prismaClients from './lib/prisma';
-type Bindings = {
-  DB: D1Database
-}
-const app = new Hono<{ Bindings: Bindings }>() // binding env value
 
-app.get('/', async (c) => {
-  // return c.json('Hello World');
-  const prisma = await prismaClients.fetch(c.env.DB)
-  const users = await prisma.user.findMany()
-  console.log('users', users)
-  return c.json(users)
-});
+
+const app = new Hono<{Bindings:{  DB: D1Database }}>() // binding env value
+
+app.use('*', logger());
+app.route('/products', await import('./routes/products').then((m) => m.default))
+app.get('/', (c) => c.text('API is running 🚀'))
 export default app
