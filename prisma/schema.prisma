@@ -13,7 +13,61 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  name     String?
+  role     String?       // e.g., admin, staff
+  profile  String?
+  orders   Order[]       // if users can create/manage orders
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id           Int      @id @default(autoincrement())
+  productCode  String   @unique
+  name         String
+  description  String?
+  costPrice    Float
+  sellingPrice Float
+  orderItems   OrderItem[]  // relation
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Customer {
+  id          Int      @id @default(autoincrement())
+  name        String
+  phoneNumber String   @unique
+  pincode     String?
+  address     String?
+  points      Int      @default(0)
+  orders      Order[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Order {
+  id          Int        @id @default(autoincrement())
+  customerId  Int
+  customer    Customer   @relation(fields: [customerId], references: [id])
+  userId      Int?       // optional: track which user created the order
+  user        User?      @relation(fields: [userId], references: [id])
+  orderItems  OrderItem[]
+  totalAmount Float      @default(0) // can be calculated
+  status      String     @default("PENDING") // e.g., PENDING, PAID, SHIPPED
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model OrderItem {
+  id         Int     @id @default(autoincrement())
+  orderId    Int
+  order      Order   @relation(fields: [orderId], references: [id])
+  productId  Int
+  product    Product @relation(fields: [productId], references: [id])
+  quantity   Int
+  price      Float   // snapshot of sellingPrice at the time of order
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

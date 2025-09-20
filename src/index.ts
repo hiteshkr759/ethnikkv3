@@ -1,17 +1,15 @@
-import { PrismaClient } from './generated/prisma/';
-import { PrismaD1 } from '@prisma/adapter-d1';
-
-export interface Env {
-	DB: D1Database;
+import { Hono } from 'hono'
+import prismaClients from './lib/prisma';
+type Bindings = {
+  DB: D1Database
 }
+const app = new Hono<{ Bindings: Bindings }>() // binding env value
 
-export default {
-	async fetch(request, env, ctx): Promise<Response> {
-		const adapter = new PrismaD1(env.DB);
-		const prisma = new PrismaClient({ adapter });
-
-		const users = await prisma.user.findMany();
-		const result = JSON.stringify(users);
-		return new Response(result);
-	},
-} satisfies ExportedHandler<Env>;
+app.get('/', async (c) => {
+  // return c.json('Hello World');
+  const prisma = await prismaClients.fetch(c.env.DB)
+  const users = await prisma.user.findMany()
+  console.log('users', users)
+  return c.json(users)
+});
+export default app
